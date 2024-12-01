@@ -1,7 +1,6 @@
 defmodule AdventCode2024Test do
   use ExUnit.Case
   doctest AdventCode2024
-  alias AdventCode2024.Day1
 
   describe "Day 1: Historian Hysteria" do
     test "solves day 1 puzzle with actual input file" do

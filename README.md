@@ -3,15 +3,30 @@
 This repository contains solutions for the [Advent of Code 2024](https://adventofcode.com/2024)
 programming puzzles, implemented in Elixir.
 
+## AI Assistance
+
+This project was developed with the assistance of AI tools:
+
+- [Aider](https://github.com/paul-gauthier/aider) - AI coding assistant
+- Claude (Sonnet) - Anthropic's AI model for pair programming
+
+The AI tools helped with:
+
+- Code structure and organization
+- Problem-solving approaches
+- Testing strategies
+- Documentation
+
 ## Project Description
 
-Advent of Code is an annual set of Christmas-themed programming challenges that follow an advent calendar. Each day, a new two-part puzzle is released. This project provides solutions to these puzzles using Elixir, demonstrating functional programming concepts and Elixir-specific features.
+Advent of Code is an annual set of Christmas-themed programming challenges that follow
+an advent calendar. Each day, a new two-part puzzle is released. This project provides
+solutions to these puzzles using Elixir, demonstrating functional programming concepts
+and Elixir-specific features.
 
 ## Technology Stack
 
 - **Language**: Elixir 1.17
-- **Build Tool**: Mix
-- **Testing Framework**: ExUnit
 
 ## Getting Started
 
@@ -24,20 +39,20 @@ Advent of Code is an annual set of Christmas-themed programming challenges that 
 
 1. Clone the repository:
 
-```bash
+```sh
 git clone https://github.com/yourusername/advent_code_2024.git
 cd advent_code_2024
 ```
 
 2. Fetch dependencies:
 
-```bash
+```sh
 mix deps.get
 ```
 
 3. Compile the project:
 
-```bash
+```sh
 mix compile
 ```
 
@@ -47,7 +62,7 @@ mix compile
 
 To run a specific day's solution:
 
-```bash
+```sh
 # Run Day 1 solution
 mix run -e "AdventCode2024.solve_day1() |> IO.inspect()"
 
@@ -59,19 +74,19 @@ mix run -e "AdventCode2024.solve_day1_part2() |> IO.inspect()"
 
 To run all tests:
 
-```bash
+```sh
 mix test
 ```
 
 To run tests for a specific day:
 
-```bash
+```sh
 mix test test/advent_code2024_test.exs
 ```
 
 ## Project Structure
 
-```
+```sh
 .
 ├── lib/
 │   ├── advent_code2024.ex          # Main module
