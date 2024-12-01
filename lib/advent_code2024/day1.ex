@@ -3,6 +3,7 @@ defmodule AdventCode2024.Day1 do
   Solution for Advent of Code 2024 - Day 1: Historian Hysteria
   """
 
+  @spec solve(String.t()) :: {:ok, integer()} | {:error, String.t()}
   def solve(input_file \\ "day1/input.txt") do
     case File.read(input_file) do
       {:ok, content} ->
@@ -15,6 +16,7 @@ defmodule AdventCode2024.Day1 do
     end
   end
 
+  @spec solve_part2(String.t()) :: {:ok, integer()} | {:error, String.t()}
   def solve_part2(input_file \\ "day1/input.txt") do
     case File.read(input_file) do
       {:ok, content} ->
@@ -27,6 +29,7 @@ defmodule AdventCode2024.Day1 do
     end
   end
 
+  @spec parse_input(String.t()) :: {[integer()], [integer()]}
   defp parse_input(content) do
     {left, right} =
       content
@@ -40,19 +43,19 @@ defmodule AdventCode2024.Day1 do
     {left, right}
   end
 
+  @spec calculate_total_distance([integer()], [integer()]) :: integer()
   defp calculate_total_distance(left, right) do
     Enum.zip(Enum.sort(left), Enum.sort(right))
     |> Enum.map(fn {a, b} -> abs(a - b) end)
     |> Enum.sum()
   end
 
+  @spec calculate_similarity_score([integer()], [integer()]) :: integer()
   defp calculate_similarity_score(left, right) do
     frequencies = Enum.frequencies(right)
 
     left
-    |> Enum.map(fn num ->
-      num * Map.get(frequencies, num, 0)
-    end)
+    |> Enum.map(&(&1 * Map.get(frequencies, &1, 0)))
     |> Enum.sum()
   end
 end
