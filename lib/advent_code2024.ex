@@ -53,4 +53,25 @@ defmodule AdventCode2024 do
     |> Enum.map(fn {a, b} -> abs(a - b) end)
     |> Enum.sum()
   end
+
+  @doc """
+  Calculates the similarity score between two lists.
+  For each number in the left list, multiplies it by the number of times it appears in the right list.
+  Returns the sum of all these products.
+
+  ## Examples
+
+      iex> AdventCode2024.calculate_similarity_score([3, 4, 2, 1, 3, 3], [4, 3, 5, 3, 9, 3])
+      31
+
+  """
+  def calculate_similarity_score(left_list, right_list) do
+    frequencies = Enum.frequencies(right_list)
+    
+    left_list
+    |> Enum.map(fn num -> 
+      num * Map.get(frequencies, num, 0)
+    end)
+    |> Enum.sum()
+  end
 end
