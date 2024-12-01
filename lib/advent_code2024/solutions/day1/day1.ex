@@ -1,4 +1,4 @@
-defmodule AdventCode2024.Day1 do
+defmodule AdventCode2024.Solutions.Day1 do
   @behaviour AdventCode2024.Solution
   @moduledoc """
   Solution for Advent of Code 2024 - Day 1: Historian Hysteria
@@ -10,6 +10,8 @@ defmodule AdventCode2024.Day1 do
   Input file format expects lines with two space-separated integers.
   """
 
+  @default_input "priv/inputs/day1/input.txt"
+
   @type result :: {:ok, integer()} | {:error, String.t()}
   @type number_pair :: {[integer()], [integer()]}
 
@@ -19,14 +21,14 @@ defmodule AdventCode2024.Day1 do
   Takes an input file path and calculates the total distance between paired numbers.
 
   ## Parameters
-    - input_file: Path to input file (defaults to "day1/input.txt")
+    - input_file: Path to input file (defaults to "priv/inputs/day1/input.txt")
 
   ## Returns
     - `{:ok, result}` where result is the calculated total distance
     - `{:error, reason}` if file reading fails
   """
   @spec solve(String.t()) :: result()
-  def solve(input_file \\ "day1/input.txt") do
+  def solve(input_file \\ @default_input) do
     case File.read(input_file) do
       {:ok, content} ->
         case parse_input(content) do
@@ -53,14 +55,14 @@ defmodule AdventCode2024.Day1 do
   Takes an input file path and calculates similarity scores based on number frequencies.
 
   ## Parameters
-    - input_file: Path to input file (defaults to "day1/input.txt")
+    - input_file: Path to input file (defaults to "priv/inputs/day1/input.txt")
 
   ## Returns
     - `{:ok, result}` where result is the similarity score
     - `{:error, reason}` if file reading fails
   """
   @spec solve_part2(String.t()) :: result()
-  def solve_part2(input_file \\ "day1/input.txt") do
+  def solve_part2(input_file \\ @default_input) do
     case File.read(input_file) do
       {:ok, content} ->
         case parse_input(content) do

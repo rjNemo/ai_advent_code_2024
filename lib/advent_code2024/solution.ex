@@ -5,7 +5,7 @@ defmodule AdventCode2024.Solution do
 
   @doc """
   Solves Part 1 of a daily challenge.
-  
+
   ## Parameters
     - input_file: Path to input file
     
@@ -17,7 +17,7 @@ defmodule AdventCode2024.Solution do
 
   @doc """
   Solves Part 2 of a daily challenge.
-  
+
   ## Parameters
     - input_file: Path to input file
     
