@@ -51,5 +51,10 @@ defmodule AdventCode2024Test do
     test "handles lists with all matches" do
       assert AdventCode2024.calculate_similarity_score([1, 1], [1, 1]) == 4
     end
+
+    test "solves day 1 part 2 puzzle with actual input file" do
+      assert {:ok, result} = AdventCode2024.solve_day1_part2()
+      assert is_integer(result)
+    end
   end
 end

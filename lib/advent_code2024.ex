@@ -18,6 +18,20 @@ defmodule AdventCode2024 do
   end
 
   @doc """
+  Reads the input file for day 1 part 2 and calculates the similarity score between the two lists.
+  Returns {:ok, result} if successful, {:error, reason} if there's an error.
+  """
+  def solve_day1_part2(input_file \\ "day1/input.txt") do
+    case File.read(input_file) do
+      {:ok, content} ->
+        {left_list, right_list} = parse_input(content)
+        result = calculate_similarity_score(left_list, right_list)
+        {:ok, result}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
   Parses the input string into two lists of numbers.
   Input format is expected to be tab-separated numbers, one pair per line.
   """
