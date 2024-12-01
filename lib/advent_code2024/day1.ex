@@ -29,10 +29,12 @@ defmodule AdventCode2024.Day1 do
   def solve(input_file \\ "day1/input.txt") do
     case File.read(input_file) do
       {:ok, content} ->
-        {left, right} = parse_input(content)
-        result = calculate_total_distance(left, right)
-        {:ok, result}
-
+        case parse_input(content) do
+          {:error, reason} -> {:error, reason}
+          {left, right} -> 
+            result = calculate_total_distance(left, right)
+            {:ok, result}
+        end
       {:error, reason} ->
         {:error, reason}
     end
@@ -61,10 +63,12 @@ defmodule AdventCode2024.Day1 do
   def solve_part2(input_file \\ "day1/input.txt") do
     case File.read(input_file) do
       {:ok, content} ->
-        {left, right} = parse_input(content)
-        result = calculate_similarity_score(left, right)
-        {:ok, result}
-
+        case parse_input(content) do
+          {:error, reason} -> {:error, reason}
+          {left, right} -> 
+            result = calculate_similarity_score(left, right)
+            {:ok, result}
+        end
       {:error, reason} ->
         {:error, reason}
     end
