@@ -32,11 +32,14 @@ defmodule AdventCode2024.Solutions.Day1 do
     case File.read(input_file) do
       {:ok, content} ->
         case parse_input(content) do
-          {:error, reason} -> {:error, reason}
-          {left, right} -> 
+          {:error, reason} ->
+            {:error, reason}
+
+          {left, right} ->
             result = calculate_total_distance(left, right)
             {:ok, result}
         end
+
       {:error, reason} ->
         {:error, reason}
     end
@@ -44,8 +47,14 @@ defmodule AdventCode2024.Solutions.Day1 do
 
   defp valid_line?(line) do
     case String.split(line, ~r/\s+/, trim: true) do
-      [left, right] -> match?({:ok, _}, Integer.parse(left)) && match?({:ok, _}, Integer.parse(right))
-      _ -> false
+      [left, right] ->
+        case {Integer.parse(left), Integer.parse(right)} do
+          {{n1, ""}, {n2, ""}} when is_integer(n1) and is_integer(n2) -> true
+          _ -> false
+        end
+
+      _ ->
+        false
     end
   end
 
@@ -66,11 +75,14 @@ defmodule AdventCode2024.Solutions.Day1 do
     case File.read(input_file) do
       {:ok, content} ->
         case parse_input(content) do
-          {:error, reason} -> {:error, reason}
-          {left, right} -> 
+          {:error, reason} ->
+            {:error, reason}
+
+          {left, right} ->
             result = calculate_similarity_score(left, right)
             {:ok, result}
         end
+
       {:error, reason} ->
         {:error, reason}
     end
@@ -79,7 +91,7 @@ defmodule AdventCode2024.Solutions.Day1 do
   @spec parse_input(String.t()) :: number_pair() | {:error, String.t()}
   defp parse_input(content) do
     lines = String.split(content, "\n", trim: true)
-    
+
     if Enum.all?(lines, &valid_line?/1) do
       {left, right} =
         lines
