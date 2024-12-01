@@ -4,6 +4,37 @@ defmodule AdventCode2024 do
   """
 
   @doc """
+  Reads the input file for day 1 and calculates the total distance between the two lists.
+  Returns {:ok, result} if successful, {:error, reason} if there's an error.
+  """
+  def solve_day1(input_file \\ "day1/input.txt") do
+    case File.read(input_file) do
+      {:ok, content} ->
+        {left_list, right_list} = parse_input(content)
+        result = calculate_total_distance(left_list, right_list)
+        {:ok, result}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
+  Parses the input string into two lists of numbers.
+  Input format is expected to be tab-separated numbers, one pair per line.
+  """
+  def parse_input(content) do
+    {left, right} =
+      content
+      |> String.split("\n", trim: true)
+      |> Enum.map(&String.split(&1, ~r/\s+/, trim: true))
+      |> Enum.map(fn [left, right] -> 
+        {String.to_integer(left), String.to_integer(right)}
+      end)
+      |> Enum.unzip()
+
+    {left, right}
+  end
+
+  @doc """
   Calculates the total distance between two lists of numbers.
   Lists are first sorted, then paired up, and the absolute differences are summed.
 
