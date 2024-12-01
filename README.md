@@ -1,6 +1,7 @@
 # Advent of Code 2024
 
-This repository contains solutions for the [Advent of Code 2024](https://adventofcode.com/2024) programming puzzles, implemented in Elixir.
+This repository contains solutions for the [Advent of Code 2024](https://adventofcode.com/2024)
+programming puzzles, implemented in Elixir.
 
 ## Project Description
 
@@ -22,17 +23,20 @@ Advent of Code is an annual set of Christmas-themed programming challenges that 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/advent_code_2024.git
 cd advent_code_2024
 ```
 
 2. Fetch dependencies:
+
 ```bash
 mix deps.get
 ```
 
 3. Compile the project:
+
 ```bash
 mix compile
 ```
@@ -89,4 +93,3 @@ mix test test/advent_code2024_test.exs
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
