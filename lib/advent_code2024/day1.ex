@@ -1,4 +1,5 @@
 defmodule AdventCode2024.Day1 do
+  @behaviour AdventCode2024.Solution
   @moduledoc """
   Solution for Advent of Code 2024 - Day 1: Historian Hysteria
 
