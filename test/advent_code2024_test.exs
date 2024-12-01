@@ -16,10 +16,11 @@ defmodule AdventCode2024Test do
       input = "1\t2\n3\t4\n5\t6"
       assert {[1, 3, 5], [2, 4, 6]} = AdventCode2024.parse_input(input)
     end
+
     test "calculates total distance between two lists using example input" do
       left_list = [3, 4, 2, 1, 3, 3]
       right_list = [4, 3, 5, 3, 9, 3]
-      
+
       assert AdventCode2024.calculate_total_distance(left_list, right_list) == 11
     end
 
@@ -36,7 +37,7 @@ defmodule AdventCode2024Test do
     test "calculates similarity score using example input" do
       left_list = [3, 4, 2, 1, 3, 3]
       right_list = [4, 3, 5, 3, 9, 3]
-      
+
       assert AdventCode2024.calculate_similarity_score(left_list, right_list) == 31
     end
 
