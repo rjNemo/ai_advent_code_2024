@@ -7,13 +7,14 @@ defmodule AdventCode2024.Solutions.Day1Test do
   setup do
     # Ensure the fixtures directory exists
     File.mkdir_p!("test/fixtures/day1")
-    
+
     # Create test input file
     test_content = """
     1 2
     3 4
     5 6
     """
+
     File.write!(@test_input, test_content)
 
     on_exit(fn ->
