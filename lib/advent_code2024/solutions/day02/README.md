@@ -24,7 +24,7 @@ A report is considered safe if it meets both of these criteria:
 1 3 6 7 9  # Safe (all increasing by 1-3)
 ```
 
-### Part 1 Challenge
+## Part 1 Challenge
 
 Count how many reports in the input data are safe according to the rules above.
 
@@ -36,21 +36,25 @@ Each line contains space-separated integers representing the levels in a report.
 
 In the example above, 2 reports are safe.
 
---- Part Two ---
-The engineers are surprised by the low number of safe reports until they realize they forgot to tell you about the Problem Dampener.
+## Part 2 Challenge
 
-The Problem Dampener is a reactor-mounted module that lets the reactor safety systems tolerate a single bad level in what would otherwise be a safe report. It's like the bad level never happened!
+The engineers discovered they forgot to tell you about the Problem Dampener - a reactor
+module that can tolerate a single bad level in a report. If removing any single level
+from an unsafe report would make it safe according to the original rules, that report
+should now be considered safe.
 
-Now, the same rules apply as before, except if removing a single level from an unsafe report would make it safe, the report instead counts as safe.
+For example, in the same reports from Part 1:
 
-More of the above example's reports are now safe:
+```csv
+7 6 4 2 1  # Safe (already safe, no removal needed)
+1 2 7 8 9  # Still unsafe (no single removal helps)
+9 7 6 2 1  # Still unsafe (no single removal helps)
+1 3 2 4 5  # Now safe (removing 3 makes it safe)
+8 6 4 4 1  # Now safe (removing one 4 makes it safe)
+1 3 6 7 9  # Safe (already safe, no removal needed)
+```
 
-7 6 4 2 1: Safe without removing any level.
-1 2 7 8 9: Unsafe regardless of which level is removed.
-9 7 6 2 1: Unsafe regardless of which level is removed.
-1 3 2 4 5: Safe by removing the second level, 3.
-8 6 4 4 1: Safe by removing the third level, 4.
-1 3 6 7 9: Safe without removing any level.
-Thanks to the Problem Dampener, 4 reports are actually safe!
+With the Problem Dampener active, 4 reports are now considered safe instead of
+just 2.
 
-Update your analysis by handling situations where the Problem Dampener can remove a single level from unsafe reports. How many reports are now safe?
+Count how many reports become safe when the Problem Dampener is active.
