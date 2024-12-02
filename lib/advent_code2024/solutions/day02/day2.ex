@@ -12,9 +12,15 @@ defmodule AdventCode2024.Solutions.Day2 do
   def solve(input \\ @default_input)
   def solve(""), do: {:error, :no_valid_reports}
   def solve(input) when is_binary(input) and input != "" do
-    case File.read(input) do
-      {:ok, content} -> solve_content(content)
-      {:error, reason} -> {:error, reason}
+    if String.contains?(input, "\n") or !String.contains?(input, "/") do
+      # Input is content
+      solve_content(input)
+    else
+      # Input is file path
+      case File.read(input) do
+        {:ok, content} -> solve_content(content)
+        {:error, reason} -> {:error, reason}
+      end
     end
   end
 
