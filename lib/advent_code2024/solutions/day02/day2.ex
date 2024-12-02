@@ -79,4 +79,49 @@ defmodule AdventCode2024.Solutions.Day2 do
   defp all_decreasing?(diffs) do
     Enum.all?(diffs, fn diff -> diff < 0 and diff >= -3 end)
   end
+
+  @doc """
+  Analyzes reactor reports with Problem Dampener active to count safe reports.
+  A report is safe if it's already safe or becomes safe after removing one number.
+  Returns {:ok, count} for valid input or {:error, reason} for invalid input.
+  """
+  def solve_part2(input \\ @default_input)
+  def solve_part2(""), do: {:error, :no_valid_reports}
+  def solve_part2(input) when is_binary(input) and input != "" do
+    if String.contains?(input, "\n") or !String.contains?(input, "/") do
+      # Input is content
+      solve_part2_content(input)
+    else
+      # Input is file path
+      case File.read(input) do
+        {:ok, content} -> solve_part2_content(content)
+        {:error, reason} -> {:error, reason}
+      end
+    end
+  end
+
+  defp solve_part2_content(""), do: {:error, :no_valid_reports}
+  defp solve_part2_content(content) when is_binary(content) and content != "" do
+    lines = String.split(content, "\n", trim: true)
+
+    with {:ok, reports} <- parse_reports(lines) do
+      safe_count = Enum.count(reports, &safe_with_dampener?/1)
+      {:ok, safe_count}
+    end
+  end
+
+  defp safe_with_dampener?(levels) do
+    # Check if already safe without removal
+    if safe_report?(levels) do
+      true
+    else
+      # Try removing each number one at a time
+      0..(length(levels) - 1)
+      |> Enum.any?(fn index ->
+        levels
+        |> List.delete_at(index)
+        |> safe_report?()
+      end)
+    end
+  end
 end
