@@ -47,9 +47,33 @@ defmodule AdventCode2024.Solutions.Day03Test do
       assert Day03.solve_part2("") == {:error, :no_input}
     end
 
-    @tag :skip
     test "returns error for invalid file" do
       assert Day03.solve_part2("nonexistent.txt") == {:error, :enoent}
+    end
+
+    test "handles single multiplication with do/don't controls" do
+      input = "do()mul(2,4)"
+      assert Day03.solve_part2(input) == {:ok, 8}
+    end
+
+    test "respects don't instruction" do
+      input = "mul(2,4)don't()mul(5,5)"
+      assert Day03.solve_part2(input) == {:ok, 8}
+    end
+
+    test "handles multiple control switches" do
+      input = "mul(2,4)don't()mul(5,5)do()mul(8,5)"
+      assert Day03.solve_part2(input) == {:ok, 48}
+    end
+
+    test "starts with multiplications enabled" do
+      input = "mul(3,3)mul(2,2)don't()mul(5,5)"
+      assert Day03.solve_part2(input) == {:ok, 13}
+    end
+
+    test "ignores invalid control instructions" do
+      input = "mul(2,4)dont()mul(5,5)doo()mul(3,3)"
+      assert Day03.solve_part2(input) == {:ok, 38}
     end
   end
 end
