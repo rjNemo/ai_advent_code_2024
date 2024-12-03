@@ -13,15 +13,17 @@ defmodule AdventCode2024.Solutions.Day03 do
   def solve(input \\ @default_input)
   def solve(""), do: {:error, :no_input}
   def solve(input) when is_binary(input) and input != "" do
-    if String.contains?(input, "/") and not String.contains?(input, "\n") do
-      # Input is a file path
-      case File.read(input) do
-        {:ok, content} -> solve_content(content)
-        {:error, reason} -> {:error, reason}
-      end
-    else
-      # Input is content
-      solve_content(input)
+    cond do
+      # Check if it looks like a file path and try to read it
+      String.contains?(input, "/") and not String.contains?(input, "\n") ->
+        case File.read(input) do
+          {:ok, content} -> solve_content(content)
+          {:error, reason} -> {:error, reason}
+        end
+      
+      # Treat as direct content
+      true -> 
+        solve_content(input)
     end
   end
 
@@ -31,15 +33,17 @@ defmodule AdventCode2024.Solutions.Day03 do
   def solve_part2(input \\ @default_input)
   def solve_part2(""), do: {:error, :no_input}
   def solve_part2(input) when is_binary(input) and input != "" do
-    if String.contains?(input, "\n") or !String.contains?(input, "/") do
-      # Input is content
-      solve_part2_content(input)
-    else
-      # Input is file path
-      case File.read(input) do
-        {:ok, content} -> solve_part2_content(content)
-        {:error, reason} -> {:error, reason}
-      end
+    cond do
+      # Check if it looks like a file path and try to read it
+      String.contains?(input, "/") and not String.contains?(input, "\n") ->
+        case File.read(input) do
+          {:ok, content} -> solve_part2_content(content)
+          {:error, reason} -> {:error, reason}
+        end
+      
+      # Treat as direct content
+      true -> 
+        solve_part2_content(input)
     end
   end
 
@@ -71,8 +75,9 @@ defmodule AdventCode2024.Solutions.Day03 do
 
   defp process_multiplications(content) do
     # Split content into tokens that match either multiplication or control instructions
-    tokens = Regex.scan(~r/(?:mul\(\d{1,3},\d{1,3}\)|do\(\)|don't\(\))/, content)
+    tokens = Regex.scan(~r/(?:mul\(\d{1,3},\d{1,3}\)|do\(\)|don't\(\))|(?:do|don't)\(\)/, content)
              |> List.flatten()
+             |> Enum.filter(&(&1 in ["do()", "don't()"] or String.starts_with?(&1, "mul(")))
 
     # Process tokens in order, tracking multiplication state
     tokens
