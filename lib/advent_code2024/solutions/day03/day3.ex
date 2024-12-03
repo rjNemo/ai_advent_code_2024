@@ -14,17 +14,14 @@ defmodule AdventCode2024.Solutions.Day03 do
   def solve(""), do: {:error, :no_input}
   def solve(input) when is_binary(input) and input != "" do
     cond do
-      String.contains?(input, "\n") -> 
-        # Input is multiline content
-        solve_content(input)
-      String.contains?(input, "/") ->
-        # Input is file path
+      # If it looks like a file path and doesn't contain newlines
+      String.contains?(input, "/") and not String.contains?(input, "\n") ->
         case File.read(input) do
           {:ok, content} -> solve_content(content)
           {:error, reason} -> {:error, reason}
         end
+      # If it's not a file path or contains newlines, treat as content
       true ->
-        # Input is single line content
         solve_content(input)
     end
   end
