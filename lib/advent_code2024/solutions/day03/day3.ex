@@ -13,16 +13,15 @@ defmodule AdventCode2024.Solutions.Day03 do
   def solve(input \\ @default_input)
   def solve(""), do: {:error, :no_input}
   def solve(input) when is_binary(input) and input != "" do
-    cond do
-      # If it looks like a file path and doesn't contain newlines
-      String.contains?(input, "/") and not String.contains?(input, "\n") ->
-        case File.read(input) do
-          {:ok, content} -> solve_content(content)
-          {:error, reason} -> {:error, reason}
-        end
-      # If it's not a file path or contains newlines, treat as content
-      true ->
-        solve_content(input)
+    if String.contains?(input, "/") and not String.contains?(input, "\n") do
+      # Input is a file path
+      case File.read(input) do
+        {:ok, content} -> solve_content(content)
+        {:error, reason} -> {:error, reason}
+      end
+    else
+      # Input is content
+      solve_content(input)
     end
   end
 
@@ -52,9 +51,12 @@ defmodule AdventCode2024.Solutions.Day03 do
       ~r/mul\((\d{1,3}),(\d{1,3})\)/
       |> Regex.scan(content, capture: :all_but_first)
       |> Enum.map(fn [x, y] -> 
-        {x_int, _} = Integer.parse(x)
-        {y_int, _} = Integer.parse(y)
-        x_int * y_int
+        with {x_int, ""} <- Integer.parse(x),
+             {y_int, ""} <- Integer.parse(y) do
+          x_int * y_int
+        else
+          _ -> 0
+        end
       end)
       |> Enum.sum()
 
