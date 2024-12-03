@@ -47,8 +47,17 @@ defmodule AdventCode2024.Solutions.Day03 do
 
   defp solve_content(""), do: {:error, :no_input}
   defp solve_content(content) when is_binary(content) and content != "" do
-    # TODO: Implement solution for part 1
-    {:ok, 0}
+    result =
+      ~r/mul\((\d{1,3}),(\d{1,3})\)/
+      |> Regex.scan(content, capture: :all_but_first)
+      |> Enum.map(fn [x, y] -> 
+        {x_int, _} = Integer.parse(x)
+        {y_int, _} = Integer.parse(y)
+        x_int * y_int
+      end)
+      |> Enum.sum()
+
+    {:ok, result}
   end
 
   defp solve_part2_content(""), do: {:error, :no_input}
