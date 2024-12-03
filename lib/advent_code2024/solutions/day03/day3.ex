@@ -65,7 +65,30 @@ defmodule AdventCode2024.Solutions.Day03 do
 
   defp solve_part2_content(""), do: {:error, :no_input}
   defp solve_part2_content(content) when is_binary(content) and content != "" do
-    # TODO: Implement solution for part 2
-    {:ok, 0}
+    {result, _} = process_multiplications(content)
+    {:ok, result}
+  end
+
+  defp process_multiplications(content) do
+    # Split content into tokens that match either multiplication or control instructions
+    tokens = Regex.scan(~r/(?:mul\(\d{1,3},\d{1,3}\)|do\(\)|don't\(\))/, content)
+             |> List.flatten()
+
+    # Process tokens in order, tracking multiplication state
+    tokens
+    |> Enum.reduce({0, true}, fn token, {sum, multiply_enabled} ->
+      cond do
+        token == "do()" ->
+          {sum, true}
+        token == "don't()" ->
+          {sum, false}
+        String.starts_with?(token, "mul") && multiply_enabled ->
+          [n1, n2] = Regex.run(~r/mul\((\d{1,3}),(\d{1,3})\)/, token, capture: :all_but_first)
+                    |> Enum.map(&String.to_integer/1)
+          {sum + n1 * n2, multiply_enabled}
+        true ->
+          {sum, multiply_enabled}
+      end
+    end)
   end
 end
