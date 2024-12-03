@@ -39,20 +39,30 @@ Total = (2*4) + (5*5) + (11*8) + (8*5) = 161
 
 Scan the corrupted memory for valid mul instructions and sum their results.
 
---- Part Two ---
-As you scan through the corrupted memory, you notice that some of the conditional statements are also still intact. If you handle some of the uncorrupted conditional statements in the program, you might be able to get an even more accurate result.
+## Part Two: Conditional Processing
 
-There are two new instructions you'll need to handle:
+The solution needs to handle two additional control instructions that affect
+multiplication processing:
 
-The do() instruction enables future mul instructions.
-The don't() instruction disables future mul instructions.
-Only the most recent do() or don't() instruction applies. At the beginning of the program, mul instructions are enabled.
+1. `do()` - enables future multiplication instructions
+2. `don't()` - disables future multiplication instructions
 
-For example:
+Key rules:
 
-xmul(2,4)&mul[3,7]!^don't()\_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))
-This corrupted memory is similar to the example from before, but this time the mul(5,5) and mul(11,8) instructions are disabled because there is a don't() instruction before them. The other mul instructions function normally, including the one at the end that gets re-enabled by a do() instruction.
+- Multiplications start enabled by default
+- Only the most recent do()/don't() instruction applies
+- Only enabled multiplications should be calculated and summed
+- Control instructions can appear anywhere in the corrupted input
 
-This time, the sum of the results is 48 (2*4 + 8*5).
+Example:
 
-Handle the new instructions; what do you get if you add up all of the results of just the enabled multiplications?
+```txt
+mul(2,4)don't()mul(5,5)do()mul(8,5)
+```
+
+Result = 48 because:
+
+- mul(2,4) starts enabled (= 8)
+- don't() disables mul(5,5) (ignored)
+- do() re-enables mul(8,5) (= 40)
+- Total: 8 + 40 = 48
