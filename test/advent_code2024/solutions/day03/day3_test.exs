@@ -73,7 +73,12 @@ defmodule AdventCode2024.Solutions.Day03Test do
 
     test "ignores invalid control instructions" do
       input = "mul(2,4)dont()mul(5,5)doo()mul(3,3)"
-      assert Day03.solve_part2(input) == {:ok, 38}
+      assert Day03.solve_part2(input) == {:ok, 42}
+    end
+
+    test "solves README example for part 2" do
+      input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
+      assert Day03.solve_part2(input) == {:ok, 48}
     end
   end
 end
