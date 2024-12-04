@@ -98,7 +98,7 @@ defmodule AdventCode2024.Solutions.Day04 do
     ]
 
     grid_chars = Enum.map(grid, &String.graphemes/1)
-    
+
     grid_chars
     |> Enum.with_index()
     |> Enum.reduce(0, fn {row, row_idx}, acc ->
@@ -122,24 +122,41 @@ defmodule AdventCode2024.Solutions.Day04 do
   end
 
   defp find_xmas?(grid, {row, col}, {d_row, d_col}) do
-    # Define the positions for the X shape
-    positions = [
+    # Define the positions for the X pattern
+    positions_right = [
+      # M
       {row, col},
+      # A
       {row + d_row, col + d_col},
-      {row + 2 * d_row, col + 2 * d_col},
-      {row + d_row, col - d_col}
+      # S
+      {row + 2 * d_row, col + 2 * d_col}
     ]
 
-    # Check if all positions contain the correct letters for "MAS"
-    Enum.with_index(positions)
-    |> Enum.all?(fn {{r, c}, idx} ->
-      within_bounds?(grid, r, c) && 
-      case idx do
-        0 -> Enum.at(Enum.at(grid, r), c) == "M"
-        1 -> Enum.at(Enum.at(grid, r), c) == "A"
-        2 -> Enum.at(Enum.at(grid, r), c) == "S"
-        3 -> Enum.at(Enum.at(grid, r), c) == "S"
-      end
-    end)
+    positions_left = [
+      # M
+      {row, col + 2 * d_col},
+      # A (center shared)
+      {row + d_row, col + d_col},
+      # S
+      {row + 2 * d_row, col}
+    ]
+
+    # Check both diagonals for "MAS" (can be forwards or backwards)
+    (check_mas?(grid, positions_right) or check_sam?(grid, positions_right)) and
+      (check_mas?(grid, positions_left) or check_sam?(grid, positions_left))
+  end
+
+  defp check_mas?(grid, [{r1, c1}, {r2, c2}, {r3, c3}]) do
+    within_bounds?(grid, r1, c1) and within_bounds?(grid, r2, c2) and within_bounds?(grid, r3, c3) and
+      Enum.at(Enum.at(grid, r1), c1) == "M" and
+      Enum.at(Enum.at(grid, r2), c2) == "A" and
+      Enum.at(Enum.at(grid, r3), c3) == "S"
+  end
+
+  defp check_sam?(grid, [{r1, c1}, {r2, c2}, {r3, c3}]) do
+    within_bounds?(grid, r1, c1) and within_bounds?(grid, r2, c2) and within_bounds?(grid, r3, c3) and
+      Enum.at(Enum.at(grid, r1), c1) == "S" and
+      Enum.at(Enum.at(grid, r2), c2) == "A" and
+      Enum.at(Enum.at(grid, r3), c3) == "M"
   end
 end
