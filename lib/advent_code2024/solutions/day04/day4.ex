@@ -40,19 +40,6 @@ defmodule AdventCode2024.Solutions.Day04 do
     end)
   end
 
-  @doc """
-  Counts the occurrences of a word in all possible directions from a given starting position in the grid.
-
-  ## Parameters
-  - grid: A 2D list representing the word search grid.
-  - word: The word to be searched for.
-  - row: The starting row index.
-  - col: The starting column index.
-  - directions: A list of tuples representing the directions to search in.
-
-  ## Returns
-  - The number of times the word is found from the given starting position in the grid.
-  """
   defp count_word_from(grid, word, {row, col}, directions) do
     directions
     |> Enum.reduce(0, fn direction, acc ->
@@ -97,5 +84,55 @@ defmodule AdventCode2024.Solutions.Day04 do
   end
 
   def solve_part2(_input_file) do
+  end
+
+  def count_x_mas(grid, word \\ "MAS") do
+    directions = [
+      # Down
+      {1, 0},
+      # Right
+      {0, 1},
+      # Down-right diagonal
+      {1, 1},
+      # Down-left diagonal
+      {1, -1}
+    ]
+
+    grid
+    |> Enum.with_index()
+    |> Enum.reduce(0, fn {row, row_idx}, acc ->
+      row
+      |> Enum.with_index()
+      |> Enum.reduce(acc, fn {_, col_idx}, acc_inner ->
+        acc_inner + count_xmas_from(grid, word, {row_idx, col_idx}, directions)
+      end)
+    end)
+  end
+
+  defp count_xmas_from(grid, _word, {row, col}, directions) do
+    directions
+    |> Enum.reduce(0, fn direction, acc ->
+      if find_xmas?(grid, {row, col}, direction) do
+        acc + 1
+      else
+        acc
+      end
+    end)
+  end
+
+  defp find_xmas?(grid, {row, col}, {d_row, d_col}) do
+    # Define the positions for the X shape
+    positions = [
+      {row, col},
+      {row + d_row, col + d_col},
+      {row + 2 * d_row, col + 2 * d_col},
+      {row + d_row, col - d_col}
+    ]
+
+    # Check if all positions contain the correct letters for "MAS"
+    Enum.with_index(positions)
+    |> Enum.all?(fn {{r, c}, idx} ->
+      within_bounds?(grid, r, c) && Enum.at(Enum.at(grid, r), c) == String.at("MAS", idx)
+    end)
   end
 end
