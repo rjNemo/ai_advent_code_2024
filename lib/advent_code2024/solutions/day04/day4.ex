@@ -105,41 +105,48 @@ defmodule AdventCode2024.Solutions.Day04 do
   end
 
   defp is_x_mas_pattern?(grid, {row, col}) do
-    # Define the four possible X patterns (clockwise from top-left)
-    patterns = [
-      # Top-left to bottom-right + Top-right to bottom-left
-      [{-1, -1}, {0, 0}, {1, 1}, {-1, 1}, {0, 0}, {1, -1}],
-      # Top-right to bottom-left + Top-left to bottom-right
-      [{-1, 1}, {0, 0}, {1, -1}, {-1, -1}, {0, 0}, {1, 1}],
-      # Bottom-right to top-left + Bottom-left to top-right
-      [{1, 1}, {0, 0}, {-1, -1}, {1, -1}, {0, 0}, {-1, 1}],
-      # Bottom-left to top-right + Bottom-right to top-left
-      [{1, -1}, {0, 0}, {-1, 1}, {1, 1}, {0, 0}, {-1, -1}]
+    # Get the center character first
+    center = get_char(grid, row, col)
+    if center != "A", do: false,
+    else: check_diagonals(grid, row, col)
+  end
+
+  defp check_diagonals(grid, row, col) do
+    # Define the four diagonal directions from center
+    diagonals = [
+      [{-1, -1}, {1, 1}],  # top-left to bottom-right
+      [{-1, 1}, {1, -1}],  # top-right to bottom-left
     ]
 
-    Enum.any?(patterns, fn pattern ->
-      check_x_pattern?(grid, {row, col}, pattern)
+    # For each diagonal pair, check if either forms a valid MAS pattern
+    Enum.any?(diagonals, fn [d1, d2] ->
+      chars1 = get_diagonal_chars(grid, row, col, d1)
+      chars2 = get_diagonal_chars(grid, row, col, d2)
+      
+      case {chars1, chars2} do
+        {[c1, "A", c3], [c4, "A", c6]} when not is_nil(c1) and not is_nil(c3) and not is_nil(c4) and not is_nil(c6) ->
+          (is_mas?(c1, c3) and is_mas?(c4, c6)) or
+          (is_mas?(c3, c1) and is_mas?(c6, c4))
+        _ -> false
+      end
     end)
   end
 
-  defp check_x_pattern?(grid, {center_row, center_col}, positions) do
-    letters = positions
-    |> Enum.map(fn {dr, dc} ->
-      r = center_row + dr
-      c = center_col + dc
-      if within_bounds?(grid, r, c) do
-        Enum.at(Enum.at(grid, r), c)
-      end
-    end)
+  defp get_diagonal_chars(grid, row, col, {dr, dc}) do
+    [
+      get_char(grid, row - dr, col - dc),
+      get_char(grid, row, col),
+      get_char(grid, row + dr, col + dc)
+    ]
+  end
 
-    case letters do
-      [m1, a1, s1, m2, a2, s2] when not is_nil(m1) and not is_nil(s1) and not is_nil(m2) and not is_nil(s2) ->
-        # Check if we have valid MAS patterns in both diagonals
-        (m1 == "M" and a1 == "A" and s1 == "S" and
-         m2 == "M" and a2 == "A" and s2 == "S") or
-        (s1 == "S" and a1 == "A" and m1 == "M" and
-         s2 == "S" and a2 == "A" and m2 == "M")
-      _ -> false
+  defp get_char(grid, row, col) do
+    if within_bounds?(grid, row, col) do
+      Enum.at(Enum.at(grid, row), col)
     end
+  end
+
+  defp is_mas?(first, last) do
+    first == "M" and last == "S"
   end
 end
