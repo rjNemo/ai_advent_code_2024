@@ -82,7 +82,12 @@ defmodule AdventCode2024.Solutions.Day04 do
     |> count_word_occurrences("XMAS")
   end
 
-  def solve_part2(_input_file) do
+  def solve_part2(input_file \\ @default_input) do
+    input_file
+    |> File.stream!()
+    |> Stream.map(&String.trim/1)
+    |> Enum.to_list()
+    |> count_x_mas()
   end
 
   def count_x_mas(grid) do
@@ -94,7 +99,8 @@ defmodule AdventCode2024.Solutions.Day04 do
       row
       |> Enum.with_index()
       |> Enum.reduce(acc, fn {cell, col_idx}, acc_inner ->
-        if cell == "A" do  # Start from the center A
+        # Start from the center A
+        if cell == "A" do
           acc_inner + check_x_patterns(processed_grid, {row_idx, col_idx})
         else
           acc_inner
@@ -116,28 +122,45 @@ defmodule AdventCode2024.Solutions.Day04 do
   end
 
   defp check_x_pattern(grid, {row, col}, step) do
-    # Check if we can form an X pattern with MAS on both diagonals
-    check_diagonal(grid, {row, col}, {-step, -step}, {step, step}) and  # top-left to bottom-right
-    check_diagonal(grid, {row, col}, {-step, step}, {step, -step})      # top-right to bottom-left
+    # For a valid X pattern, we need:
+    # 1. Both diagonals must have valid MAS patterns
+    # 2. The patterns must not share any positions except the center A
+    # 3. Both diagonals must be the same length (step)
+    top_left = {row - step, col - step}
+    top_right = {row - step, col + step}
+    bottom_left = {row + step, col - step}
+    bottom_right = {row + step, col + step}
+
+    # Check if all positions are within bounds
+    # Check both diagonals
+    # First diagonal: top-left to bottom-right
+    # First diagonal: bottom-right to top-left (reverse)
+    # Second diagonal: top-right to bottom-left
+    # Second diagonal: bottom-left to top-right (reverse)
+    within_bounds?(grid, row - step, col - step) and
+      within_bounds?(grid, row - step, col + step) and
+      within_bounds?(grid, row + step, col - step) and
+      within_bounds?(grid, row + step, col + step) and
+      (check_diagonal_pattern(grid, top_left, bottom_right, {row, col}) or
+         check_diagonal_pattern(grid, bottom_right, top_left, {row, col})) and
+      (check_diagonal_pattern(grid, top_right, bottom_left, {row, col}) or
+         check_diagonal_pattern(grid, bottom_left, top_right, {row, col}))
   end
 
-  defp check_diagonal(grid, {center_row, center_col}, {top_dr, top_dc}, {bottom_dr, bottom_dc}) do
-    # Check top part and bottom part
-    top_row = center_row + top_dr
-    top_col = center_col + top_dc
-    bottom_row = center_row + bottom_dr
-    bottom_col = center_col + bottom_dc
+  defp check_diagonal_pattern(
+         grid,
+         {start_row, start_col},
+         {end_row, end_col},
+         {center_row, center_col}
+       ) do
+    start_char = Enum.at(Enum.at(grid, start_row), start_col)
+    center_char = Enum.at(Enum.at(grid, center_row), center_col)
+    end_char = Enum.at(Enum.at(grid, end_row), end_col)
 
-    within_bounds?(grid, top_row, top_col) and
-    within_bounds?(grid, bottom_row, bottom_col) and
-    (
-      # Check normal orientation (M at top, S at bottom)
-      (Enum.at(Enum.at(grid, top_row), top_col) == "M" and
-       Enum.at(Enum.at(grid, bottom_row), bottom_col) == "S") or
-      # Check upside down orientation (S at top, M at bottom)
-      (Enum.at(Enum.at(grid, top_row), top_col) == "S" and
-       Enum.at(Enum.at(grid, bottom_row), bottom_col) == "M")
-    )
+    # Check if we have M->A->S in this order
+    # Or S->A->M in this order
+    (start_char == "M" and center_char == "A" and end_char == "S") or
+      (start_char == "S" and center_char == "A" and end_char == "M")
   end
 
   @doc """
