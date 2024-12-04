@@ -85,6 +85,61 @@ defmodule AdventCode2024.Solutions.Day04 do
   def solve_part2(_input_file) do
   end
 
-  def count_x_mas(grid) do
+  def count_x_mas(grid) when is_list(grid) do
+    # Convert string rows to character grid
+    char_grid = Enum.map(grid, &String.graphemes/1)
+    rows = length(char_grid)
+    cols = length(Enum.at(char_grid, 0))
+
+    # Check each possible center position
+    for row <- 1..(rows - 2),
+        col <- 1..(cols - 2),
+        reduce: 0 do
+      acc ->
+        if is_x_mas_pattern?(char_grid, {row, col}) do
+          acc + 1
+        else
+          acc
+        end
+    end
+  end
+
+  defp is_x_mas_pattern?(grid, {row, col}) do
+    # Define the four possible X patterns (clockwise from top-left)
+    patterns = [
+      # Top-left to bottom-right + Top-right to bottom-left
+      [{-1, -1}, {0, 0}, {1, 1}, {-1, 1}, {0, 0}, {1, -1}],
+      # Top-right to bottom-left + Top-left to bottom-right
+      [{-1, 1}, {0, 0}, {1, -1}, {-1, -1}, {0, 0}, {1, 1}],
+      # Bottom-right to top-left + Bottom-left to top-right
+      [{1, 1}, {0, 0}, {-1, -1}, {1, -1}, {0, 0}, {-1, 1}],
+      # Bottom-left to top-right + Bottom-right to top-left
+      [{1, -1}, {0, 0}, {-1, 1}, {1, 1}, {0, 0}, {-1, -1}]
+    ]
+
+    Enum.any?(patterns, fn pattern ->
+      check_x_pattern?(grid, {row, col}, pattern)
+    end)
+  end
+
+  defp check_x_pattern?(grid, {center_row, center_col}, positions) do
+    letters = positions
+    |> Enum.map(fn {dr, dc} ->
+      r = center_row + dr
+      c = center_col + dc
+      if within_bounds?(grid, r, c) do
+        Enum.at(Enum.at(grid, r), c)
+      end
+    end)
+
+    case letters do
+      [m1, a1, s1, m2, a2, s2] when not is_nil(m1) and not is_nil(s1) and not is_nil(m2) and not is_nil(s2) ->
+        # Check if we have valid MAS patterns in both diagonals
+        (m1 == "M" and a1 == "A" and s1 == "S" and
+         m2 == "M" and a2 == "A" and s2 == "S") or
+        (s1 == "S" and a1 == "A" and m1 == "M" and
+         s2 == "S" and a2 == "A" and m2 == "M")
+      _ -> false
+    end
   end
 end
