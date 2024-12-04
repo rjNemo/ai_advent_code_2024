@@ -1,4 +1,8 @@
 defmodule AdventCode2024.Solutions.Day04 do
+  @behaviour AdventCode2024.Solution
+
+  @default_input "priv/inputs/day04/input.txt"
+
   def count_word_occurrences(grid, word) do
     grid
     |> Enum.map(&String.graphemes/1)
@@ -73,5 +77,25 @@ defmodule AdventCode2024.Solutions.Day04 do
 
   defp within_bounds?(grid, row, col) do
     row >= 0 && row < length(grid) && col >= 0 && col < length(Enum.at(grid, 0))
+  end
+
+  @doc """
+  Reads a grid from a file and counts the occurrences of a word using `count_word/2`.
+
+  ## Parameters
+  - file_path: The path to the file containing the grid.
+  - word: The word to be searched for.
+
+  ## Returns
+  - The number of times the word is found in the grid.
+  """
+  def solve(file_path \\ @default_input) do
+    file_path
+    |> File.stream!()
+    |> Enum.map(&String.trim/1)
+    |> count_word_occurrences("XMAS")
+  end
+
+  def solve_part2(_input_file) do
   end
 end
