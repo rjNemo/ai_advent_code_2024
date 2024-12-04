@@ -20,4 +20,8 @@ defmodule AdventCode2024.Solutions.Day04Test do
     actual_count = Day04.count_word_occurrences(@example_grid, "XMAS")
     assert actual_count == expected_count
   end
+
+  test "finds all occurrences of X-MAS in the grid" do
+    assert Day04.count_x_mas(@example_grid) == 9
+  end
 end

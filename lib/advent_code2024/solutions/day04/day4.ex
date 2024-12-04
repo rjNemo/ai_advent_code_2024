@@ -3,10 +3,10 @@ defmodule AdventCode2024.Solutions.Day04 do
 
   @default_input "priv/inputs/day04/input.txt"
 
-  def count_word_occurrences(grid, word) do
+  def count_word_occurrences(grid, word) when is_list(grid) do
     grid
     |> Enum.map(&String.graphemes/1)
-    |> find_word(word)
+    |> find_word(String.graphemes(word))
   end
 
   defp find_word(grid, word) do
@@ -51,9 +51,8 @@ defmodule AdventCode2024.Solutions.Day04 do
     end)
   end
 
-  defp find_word?(grid, word, {row, col}, {d_row, d_col}) do
-    word
-    |> String.codepoints()
+  defp find_word?(grid, word_chars, {row, col}, {d_row, d_col}) do
+    word_chars
     |> Enum.with_index()
     |> Enum.all?(fn {char, i} ->
       new_row = row + i * d_row
@@ -86,7 +85,7 @@ defmodule AdventCode2024.Solutions.Day04 do
   def solve_part2(_input_file) do
   end
 
-  def count_x_mas(grid, word \\ "MAS") do
+  def count_x_mas(grid) do
     directions = [
       # Down
       {1, 0},
@@ -98,18 +97,20 @@ defmodule AdventCode2024.Solutions.Day04 do
       {1, -1}
     ]
 
-    grid
+    grid_chars = Enum.map(grid, &String.graphemes/1)
+    
+    grid_chars
     |> Enum.with_index()
     |> Enum.reduce(0, fn {row, row_idx}, acc ->
       row
       |> Enum.with_index()
       |> Enum.reduce(acc, fn {_, col_idx}, acc_inner ->
-        acc_inner + count_xmas_from(grid, word, {row_idx, col_idx}, directions)
+        acc_inner + count_xmas_from(grid_chars, {row_idx, col_idx}, directions)
       end)
     end)
   end
 
-  defp count_xmas_from(grid, _word, {row, col}, directions) do
+  defp count_xmas_from(grid, {row, col}, directions) do
     directions
     |> Enum.reduce(0, fn direction, acc ->
       if find_xmas?(grid, {row, col}, direction) do
@@ -132,7 +133,13 @@ defmodule AdventCode2024.Solutions.Day04 do
     # Check if all positions contain the correct letters for "MAS"
     Enum.with_index(positions)
     |> Enum.all?(fn {{r, c}, idx} ->
-      within_bounds?(grid, r, c) && Enum.at(Enum.at(grid, r), c) == String.at("MAS", idx)
+      within_bounds?(grid, r, c) && 
+      case idx do
+        0 -> Enum.at(Enum.at(grid, r), c) == "M"
+        1 -> Enum.at(Enum.at(grid, r), c) == "A"
+        2 -> Enum.at(Enum.at(grid, r), c) == "S"
+        3 -> Enum.at(Enum.at(grid, r), c) == "S"
+      end
     end)
   end
 end
