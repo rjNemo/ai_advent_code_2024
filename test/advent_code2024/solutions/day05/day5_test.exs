@@ -1,6 +1,6 @@
-defmodule AdventCode2024.Solutions.Day5Test do
+defmodule AdventCode2024.Solutions.Day05Test do
   use ExUnit.Case
-  alias AdventCode2024.Solutions.Day5
+  alias AdventCode2024.Solutions.Day05
 
   @example_input """
   47|53
@@ -33,17 +33,30 @@ defmodule AdventCode2024.Solutions.Day5Test do
   97,13,75,29,47
   """
 
+  setup_all do
+    # Create a temporary file for testing
+    path = "test/fixtures/day05/test_input.txt"
+    File.mkdir_p!(Path.dirname(path))
+    :ok = File.write(path, @example_input)
+
+    on_exit(fn ->
+      File.rm!(path)
+    end)
+
+    {:ok, test_file: path}
+  end
+
   describe "solve/1" do
-    test "correctly identifies valid updates and sums middle pages" do
-      assert {:ok, 143} = Day5.solve_content(@example_input)
+    test "correctly identifies valid updates and sums middle pages", %{test_file: path} do
+      assert {:ok, 143} = Day05.solve(path)
     end
 
     test "returns error for empty input" do
-      assert Day5.solve("") == {:error, :no_input}
+      assert Day05.solve("") == {:error, :no_input}
     end
 
     test "returns error for invalid file" do
-      assert Day5.solve("priv/nonexistent.txt") == {:error, :enoent}
+      assert Day05.solve("priv/nonexistent.txt") == {:error, :enoent}
     end
 
     test "validates first update is in correct order" do
@@ -61,7 +74,11 @@ defmodule AdventCode2024.Solutions.Day5Test do
 
       75,47,61,53,29
       """
-      assert {:ok, 61} = Day5.solve_content(input)
+
+      path = "test/fixtures/day05/first_update.txt"
+      :ok = File.write(path, input)
+      assert {:ok, 61} = Day05.solve(path)
+      File.rm!(path)
     end
 
     test "validates second update is in correct order" do
@@ -78,7 +95,11 @@ defmodule AdventCode2024.Solutions.Day5Test do
 
       97,61,53,29,13
       """
-      assert {:ok, 53} = Day5.solve_content(input)
+
+      path = "test/fixtures/day05/second_update.txt"
+      :ok = File.write(path, input)
+      assert {:ok, 53} = Day05.solve(path)
+      File.rm!(path)
     end
 
     test "identifies invalid update due to rule violation" do
@@ -87,7 +108,11 @@ defmodule AdventCode2024.Solutions.Day5Test do
 
       75,97,47,61,53
       """
-      assert {:ok, 0} = Day5.solve_content(input)
+
+      path = "test/fixtures/day05/invalid_update.txt"
+      :ok = File.write(path, input)
+      assert {:ok, 0} = Day05.solve(path)
+      File.rm!(path)
     end
   end
 end

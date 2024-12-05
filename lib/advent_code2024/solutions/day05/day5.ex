@@ -1,4 +1,4 @@
-defmodule AdventCode2024.Solutions.Day5 do
+defmodule AdventCode2024.Solutions.Day05 do
   @moduledoc """
   Day 5: Solution for Advent of Code 2024
   """
@@ -38,9 +38,13 @@ defmodule AdventCode2024.Solutions.Day5 do
   defp solve_content(""), do: {:error, :no_input}
 
   defp solve_content(content) when is_binary(content) and content != "" do
+    {rules, updates} = parse_input(content)
+
     result =
-      content
-      |> parse_input()
+      updates
+      |> Enum.filter(&is_valid_update?(&1, rules))
+      |> Enum.map(&get_middle_number/1)
+      |> Enum.sum()
 
     {:ok, result}
   end
@@ -56,7 +60,56 @@ defmodule AdventCode2024.Solutions.Day5 do
   end
 
   defp parse_input(input) do
-    input
+    [rules_section, updates_section] = String.split(input, "\n\n", trim: true)
+
+    rules = parse_rules(rules_section)
+    updates = parse_updates(updates_section)
+
+    {rules, updates}
+  end
+
+  defp parse_rules(rules_section) do
+    rules_section
     |> String.split("\n", trim: true)
+    |> Enum.map(fn rule ->
+      [first, second] = String.split(rule, "|")
+      {String.to_integer(first), String.to_integer(second)}
+    end)
+  end
+
+  defp parse_updates(updates_section) do
+    updates_section
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn update ->
+      update
+      |> String.split(",", trim: true)
+      |> Enum.map(&String.to_integer/1)
+    end)
+  end
+
+  defp is_valid_update?(update, rules) do
+    # For each pair of numbers in the update, check if they satisfy all applicable rules
+    update
+    |> Enum.with_index()
+    |> Enum.all?(fn {num1, idx1} ->
+      update
+      |> Enum.with_index()
+      |> Enum.all?(fn {num2, idx2} ->
+        # Only check pairs where the second number comes after the first
+        if idx2 > idx1 do
+          # Check if there's a rule requiring num2 to come before num1
+          not Enum.any?(rules, fn {first, second} ->
+            num1 == second and num2 == first
+          end)
+        else
+          true
+        end
+      end)
+    end)
+  end
+
+  defp get_middle_number(update) do
+    middle_index = div(length(update), 2)
+    Enum.at(update, middle_index)
   end
 end
