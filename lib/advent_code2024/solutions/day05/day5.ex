@@ -5,71 +5,61 @@ defmodule AdventCode2024.Solutions.Day05 do
 
   @behaviour AdventCode2024.Solution
 
-  @default_input "priv/inputs/day05/input.txt"
-
-  @doc """
-  Solve part 1 of the challenge
-  """
-  def solve(input_file \\ @default_input)
+  @impl true
   def solve(""), do: {:error, :no_input}
 
-  def solve(input_file) when is_binary(input_file) and input_file != "" do
-    case File.read(input_file) do
+  def solve(path \\ "priv/inputs/day05/input.txt") do
+    case File.read(path) do
       {:ok, content} -> solve_content(content)
-      {:error, reason} -> {:error, reason}
+      {:error, :enoent} -> {:error, :enoent}
+      _ -> {:error, :no_input}
     end
   end
 
-  @doc """
-  Solve part 2 of the challenge
-  """
-  def solve_part2(input_file \\ @default_input)
+  def solve_content(""), do: {:error, :no_input}
+
+  def solve_content(content) do
+    {rules, updates} = parse_input(content)
+    valid_updates = Enum.filter(updates, &is_valid_update?(&1, rules))
+    sum = valid_updates |> Enum.map(&get_middle_number/1) |> Enum.sum()
+    {:ok, sum}
+  end
+
+  @impl true
   def solve_part2(""), do: {:error, :no_input}
 
-  def solve_part2(input_file) when is_binary(input_file) and input_file != "" do
-    case File.read(input_file) do
+  def solve_part2(path \\ "priv/inputs/day05/input.txt") do
+    case File.read(path) do
       {:ok, content} -> solve_part2_content(content)
-      {:error, reason} -> {:error, reason}
+      {:error, :enoent} -> {:error, :enoent}
+      _ -> {:error, :no_input}
     end
   end
 
-  # Private functions
+  def solve_part2_content(""), do: {:error, :no_input}
 
-  defp solve_content(""), do: {:error, :no_input}
-
-  defp solve_content(content) when is_binary(content) and content != "" do
+  def solve_part2_content(content) do
     {rules, updates} = parse_input(content)
+    invalid_updates = Enum.reject(updates, &is_valid_update?(&1, rules))
 
-    result =
-      updates
-      |> Enum.filter(&is_valid_update?(&1, rules))
+    sum =
+      invalid_updates
+      |> Enum.map(&order_update(&1, rules))
       |> Enum.map(&get_middle_number/1)
       |> Enum.sum()
 
-    {:ok, result}
+    {:ok, sum}
   end
 
-  defp solve_part2_content(""), do: {:error, :no_input}
-
-  defp solve_part2_content(content) when is_binary(content) and content != "" do
-    result =
-      content
-      |> parse_input()
-
-    {:ok, result}
-  end
-
-  defp parse_input(input) do
-    [rules_section, updates_section] = String.split(input, "\n\n", trim: true)
-
-    rules = parse_rules(rules_section)
-    updates = parse_updates(updates_section)
-
+  defp parse_input(content) do
+    [rules_str, updates_str] = String.split(content, "\n\n", trim: true)
+    rules = parse_rules(rules_str)
+    updates = parse_updates(updates_str)
     {rules, updates}
   end
 
-  defp parse_rules(rules_section) do
-    rules_section
+  defp parse_rules(rules_str) do
+    rules_str
     |> String.split("\n", trim: true)
     |> Enum.map(fn rule ->
       [first, second] = String.split(rule, "|")
@@ -77,39 +67,43 @@ defmodule AdventCode2024.Solutions.Day05 do
     end)
   end
 
-  defp parse_updates(updates_section) do
-    updates_section
+  defp parse_updates(updates_str) do
+    updates_str
     |> String.split("\n", trim: true)
-    |> Enum.map(fn update ->
-      update
-      |> String.split(",", trim: true)
+    |> Enum.map(fn line ->
+      line
+      |> String.split(",")
       |> Enum.map(&String.to_integer/1)
     end)
   end
 
   defp is_valid_update?(update, rules) do
-    # For each pair of numbers in the update, check if they satisfy all applicable rules
     update
-    |> Enum.with_index()
-    |> Enum.all?(fn {num1, idx1} ->
-      update
-      |> Enum.with_index()
-      |> Enum.all?(fn {num2, idx2} ->
-        # Only check pairs where the second number comes after the first
-        if idx2 > idx1 do
-          # Check if there's a rule requiring num2 to come before num1
-          not Enum.any?(rules, fn {first, second} ->
-            num1 == second and num2 == first
-          end)
-        else
-          true
-        end
-      end)
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.all?(fn [a, b] -> is_valid_order?(a, b, rules) end)
+  end
+
+  defp is_valid_order?(a, b, rules) do
+    not Enum.any?(rules, fn {x, y} -> x == b and y == a end)
+  end
+
+  defp get_middle_number(list) do
+    middle_index = div(length(list), 2)
+    Enum.at(list, middle_index)
+  end
+
+  defp order_update(update, rules) do
+    update
+    |> Enum.sort(fn a, b ->
+      case {should_come_before?(a, b, rules), should_come_before?(b, a, rules)} do
+        {true, false} -> true
+        {false, true} -> false
+        _ -> a > b
+      end
     end)
   end
 
-  defp get_middle_number(update) do
-    middle_index = div(length(update), 2)
-    Enum.at(update, middle_index)
+  defp should_come_before?(a, b, rules) do
+    Enum.any?(rules, fn {x, y} -> x == a and y == b end)
   end
 end
