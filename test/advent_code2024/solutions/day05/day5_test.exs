@@ -74,7 +74,6 @@ defmodule AdventCode2024.Solutions.Day05Test do
 
       75,47,61,53,29
       """
-
       path = "test/fixtures/day05/first_update.txt"
       :ok = File.write(path, input)
       assert {:ok, 61} = Day05.solve(path)
@@ -95,7 +94,6 @@ defmodule AdventCode2024.Solutions.Day05Test do
 
       97,61,53,29,13
       """
-
       path = "test/fixtures/day05/second_update.txt"
       :ok = File.write(path, input)
       assert {:ok, 53} = Day05.solve(path)
@@ -108,10 +106,78 @@ defmodule AdventCode2024.Solutions.Day05Test do
 
       75,97,47,61,53
       """
-
       path = "test/fixtures/day05/invalid_update.txt"
       :ok = File.write(path, input)
       assert {:ok, 0} = Day05.solve(path)
+      File.rm!(path)
+    end
+  end
+
+  describe "solve_part2/1" do
+    test "correctly orders invalid updates and sums middle pages", %{test_file: path} do
+      assert {:ok, 123} = Day05.solve_part2(path)
+    end
+
+    test "correctly orders first invalid update" do
+      input = """
+      75|47
+      75|29
+      47|29
+
+      75,47,29
+      """
+      path = "test/fixtures/day05/part2_first_update.txt"
+      :ok = File.write(path, input)
+      assert {:ok, 47} = Day05.solve_part2(path)
+      File.rm!(path)
+    end
+
+    test "correctly orders second invalid update" do
+      input = """
+      97|13
+      97|29
+      29|13
+
+      97,29,13
+      """
+      path = "test/fixtures/day05/part2_second_update.txt"
+      :ok = File.write(path, input)
+      assert {:ok, 29} = Day05.solve_part2(path)
+      File.rm!(path)
+    end
+
+    test "correctly orders third invalid update" do
+      input = """
+      97|75
+      97|47
+      75|47
+
+      97,75,47
+      """
+      path = "test/fixtures/day05/part2_third_update.txt"
+      :ok = File.write(path, input)
+      assert {:ok, 47} = Day05.solve_part2(path)
+      File.rm!(path)
+    end
+
+    test "ignores already correctly ordered updates" do
+      input = """
+      97|13
+      97|61
+      97|53
+      97|29
+      61|13
+      61|53
+      61|29
+      53|29
+      29|13
+
+      97,61,53,29,13
+      61,53,29,13
+      """
+      path = "test/fixtures/day05/part2_ignore_valid.txt"
+      :ok = File.write(path, input)
+      assert {:ok, 0} = Day05.solve_part2(path)
       File.rm!(path)
     end
   end
